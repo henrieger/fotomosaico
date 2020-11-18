@@ -6,11 +6,12 @@ CFLAGS = -Wall -std=c99
 all: mosaico
 
 # Linking rule
-mosaico: mosaico.o ppmHandler.o
+mosaico: mosaico.o ppmHandler.o inputHandler.o
 
 # Compiling rules
 mosaico.o: mosaico.c ppmHandler.h
 ppmHandler.o: ppmHandler.c ppmHandler.h
+inputHandler.o: inputHandler.c inputHandler.h
 
 # Activate debug options
 debug: CFLAGS += -g
@@ -23,4 +24,4 @@ clean:
 
 # Cleans all but source code and material
 purge: clean
-	-rm -f mosaico
+	-rm -f mosaico teste*.c
