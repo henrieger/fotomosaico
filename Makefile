@@ -1,4 +1,4 @@
-
+# Standard make system variables
 CC = gcc
 CFLAGS = -Wall -std=c99
 
