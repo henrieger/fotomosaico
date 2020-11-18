@@ -6,18 +6,19 @@
 // Definition of a pixel
 typedef struct pixel
 {
-    unsigned char r; // Red channel value of pixel [0..255]
-    unsigned char g; // Green channel value of pixel [0..255]
-    unsigned char b; // Blue channel value of pixel [0..255]
+    unsigned int r; // Red channel value of pixel [0..255]
+    unsigned int g; // Green channel value of pixel [0..255]
+    unsigned int b; // Blue channel value of pixel [0..255]
 } pixel_t;
 
 // Definition of an image
 typedef struct image
 {
     char *magicNumber; // Either P3 or P6, defining a raw or plain type
-    int height; // number of rows of pixels
-    int width; // number of columns of pixels
-    pixel_t ** raster; // pixel_t matrix
+    unsigned int height; // number of rows of pixels
+    unsigned int width; // number of columns of pixels
+    unsigned int maxValue; // max value of a color channel
+    pixel_t **raster; // pixel_t matrix
     FILE *source; // source stream used to open and close the file
 } image_t;
 
