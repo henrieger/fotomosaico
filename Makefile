@@ -10,7 +10,7 @@ all: mosaico
 mosaico: mosaico.o ppmHandler.o inputHandler.o
 
 # Temporary
-teste: teste.o ppmHandler.o
+teste: teste.o ppmHandler.o inputHandler.o
 teste.o: teste.c
 
 teste2: teste2.o ppmHandler.o
