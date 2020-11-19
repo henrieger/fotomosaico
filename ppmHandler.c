@@ -16,7 +16,7 @@ static int ParseHeader(image_t *image)
     char c;
     while(i < 4)
     {
-        fgets(param, 6, image->source);
+        fscanf(image->source, "%s", param);
         param[strcspn (param, "\n")] = '\0';
 
         // Checks if line is a comment and goes through file until a new line is found
@@ -334,7 +334,42 @@ double RedMean(double *img1Avg, double *img2Avg)
 }
 
 // Changes a region of an image with the contents of a tile
-int ChangeContent(image_t * image, int hStart, int hEnd, int wStart, int wEnd, image_t *tile);
+int ChangeContent(image_t * image, int hStart, int hEnd, int wStart, int wEnd, image_t *tile)
+{
+    // Error treatment
+    if(hStart < 0 || wStart < 0)
+    {
+        perror("Beginning of row/column parser smaller than 0");
+        exit(1);
+    }
+    if(hStart > image->height || wStart > image->width)
+    {
+        perror("Beginning of row/column parser greater than image");
+        exit(1);
+    }
+    if(hEnd < hStart || wEnd < wStart)
+    {
+        perror("Ending of row/column parser smaller than beginning");
+        exit(1);
+    }
+
+    // Reassign every pixel in given region with corresponding pixel in tile.
+    // Tiles begin from (0, 0).
+    // NO VERIFICATION OF TILE END IS GIVEN!!
+    for (int i = hStart; i < hEnd; i++)
+    {
+        for (int j = wStart; j < wEnd; j++)
+        {
+            // Assures that tile pixel will be placed inside image
+            if(i < hEnd && j < wEnd)
+            {
+                image->raster[i][j] = tile->raster[i - hStart][j - wStart];
+            }
+        }
+    }
+
+    return 0;
+}
 
 // Write pixel raster in P3 format
 static int WriteP3(image_t *image, FILE *output)

@@ -13,6 +13,9 @@ mosaico: mosaico.o ppmHandler.o inputHandler.o
 teste: teste.o ppmHandler.o
 teste.o: teste.c
 
+teste2: teste2.o ppmHandler.o
+teste2.o: teste2.c
+
 
 # Compiling rules
 mosaico.o: mosaico.c ppmHandler.h
