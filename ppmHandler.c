@@ -1,6 +1,7 @@
 # include "ppmHandler.h"
 # include <stdlib.h>
 # include <string.h>
+# include <math.h>
 
 // Parse through and fill header params of a '.ppm' image
 static int ParseHeader(image_t *image)
@@ -184,11 +185,82 @@ int CloseImage(image_t *image)
     return 0;
 }
 
-// Returns the average color of each channel of a certain region of an image. Return type is a float array
-float *AverageOfChannels(image_t *image, int hStart, int hEnd, int wStart, int wEnd);
+// Returns the average color of each channel of a certain region of an image. Return type is a double array
+double *AverageOfChannels(image_t *image, int hStart, int hEnd, int wStart, int wEnd)
+{
+    // Error treatment
+    if(hStart < 0 || wStart < 0)
+    {
+        perror("Beginning of row/column parser smaller than 0");
+        exit(1);
+    }
+    if(hStart > image->height || wStart > image->width)
+    {
+        perror("Beginning of row/column parser greater than image");
+        exit(1);
+    }
+    if(hEnd < hStart || wEnd < wStart)
+    {
+        perror("Ending of row/column parser smaller than beginning");
+        exit(1);
+    }
 
-// Calculates the Red Mean between two arrays of average colors
-float RedMean(float *img1, float *img2);
+    // Array containing the average of squares of each color channel
+    double *avg = malloc(3 * sizeof(double));
+
+    for (int i = 0; i < 3; i++)
+    {
+        avg[i] = 0;
+    }
+    
+    // Count actual amount of pixels in region
+    int count = 0;
+
+    // Sum the square of each pixel color
+    for (int i = hStart; i < hEnd; i++)
+    {
+        for (int j = wStart; j < wEnd; j++)
+        {
+            // Check if pixel exists inside image
+            if (i < image->height && j < image->width)
+            {
+                avg[0] += pow(image->raster[i][j].r, 2);
+                avg[1] += pow(image->raster[i][j].g, 2);
+                avg[2] += pow(image->raster[i][j].b, 2);
+                count++;
+            }
+        }
+    }
+
+    // Divide sums and takes square root
+    for (int i = 0; i < 3; i++)
+    {
+        avg[i] = sqrt(avg[i]/count);
+    }
+
+    return avg;
+}
+
+// Calculates the Red Mean between two arrays of average colors.
+// Function assumes size of array = 3 
+double RedMean(double *img1Avg, double *img2Avg)
+{
+    // Calculate the difference between the averages of each channel
+    double deltaR = img1Avg[0] - img2Avg[0];
+    double deltaG = img1Avg[1] - img2Avg[1];
+    double deltaB = img1Avg[2] - img2Avg[2];
+
+    // Calculate average between red channels
+    double r = (img1Avg[0] + img2Avg[0])/2;
+
+    
+    // Calculate the Red Mean
+    double c = sqrt((2 + r/256) * pow(deltaR, 2) +
+                    (4 * pow(deltaG, 2)) +
+                    (2 + (255 - r)/256) * pow(deltaB, 2));
+
+    return c;
+}
 
 // Changes a region of an image with the contents of a tile
 int ChangeContent(image_t * image, int hStart, int hEnd, int wStart, int wEnd, image_t *tile);

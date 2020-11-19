@@ -31,17 +31,18 @@ image_t *ReadTiles(const char *directory, int start, int amount);
 // Close and free a given image
 int CloseImage(image_t *image);
 
-// Returns the average color of each channel of a certain region of an image. Return type is a float array
-float *AverageOfChannels(image_t *image, int hStart, int hEnd, int wStart, int wEnd);
+// Returns the average color of each channel of a certain region of an image. Return type is a double array
+double *AverageOfChannels(image_t *image, int hStart, int hEnd, int wStart, int wEnd);
 
-// Calculates the Red Mean between two arrays of average colors
-float RedMean(float *img1, float *img2);
+// Calculates the Red Mean between two arrays of average colors.
+// Function assumes size of array = 3 
+double RedMean(double *img1Avg, double *img2Avg);
 
 // Changes a region of an image with the contents of a tile
 int ChangeContent(image_t * image, int hStart, int hEnd, int wStart, int wEnd, image_t *tile);
 
-// Write a '.ppm' file from a given image_t
-// if file "name" already exists, THIS ACTION WILL ERASE THE CONTENT OF THE FILE
+// Write a '.ppm' file from a given image_t.
+// If file "name" already exists, THIS ACTION WILL ERASE THE CONTENT OF THE FILE
 int WriteImage(const char *name, image_t *image);
 
 # endif

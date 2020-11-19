@@ -1,6 +1,7 @@
 # Standard make system variables
 CC = gcc
 CFLAGS = -Wall -std=c99
+LDLIBS = -lm
 
 # Default rule
 all: mosaico
@@ -8,9 +9,9 @@ all: mosaico
 # Linking rule
 mosaico: mosaico.o ppmHandler.o inputHandler.o
 
-# Temorary
-testeOpenClose: testeOpenClose.o ppmHandler.o
-testeOpenClose.o: testeOpenClose.c
+# Temporary
+teste: teste.o ppmHandler.o
+teste.o: teste.c
 
 
 # Compiling rules
@@ -29,4 +30,4 @@ clean:
 
 # Cleans all but source code and material
 purge: clean
-	-rm -f mosaico teste*.c
+	-rm -f mosaico teste*
