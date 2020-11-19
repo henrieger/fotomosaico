@@ -1,6 +1,6 @@
 # Standard make system variables
 CC = gcc
-CFLAGS = -Wall -std=c99
+CFLAGS = -Wall #-std=c99
 LDLIBS = -lm
 
 # Default rule

@@ -2,6 +2,8 @@
 # include <stdlib.h>
 # include <string.h>
 # include <math.h>
+# include <sys/types.h>
+# include <dirent.h>
 
 // Parse through and fill header params of a '.ppm' image
 static int ParseHeader(image_t *image)
@@ -162,8 +164,74 @@ image_t *ReadImage(const char *name)
     return image;
 }
 
-// Read the given tiles directory and from a certain start point and return an array of amount tiles
-image_t *ReadTiles(const char *directory, int start, int amount);
+// Read the given tiles directory and return an array of amount tiles
+image_t **ReadTiles(const char *directory, int amount)
+{
+    // Array with tiles to return
+    image_t **tiles = NULL;
+
+    // Define size of block to allocate
+    int block = 200;
+
+    // Number of blocks in directory
+    int nBlocks = 0;
+
+    // Open directory stream
+    DIR *dirstream = opendir(directory);
+    if(!dirstream)
+    {
+        perror("Failed to open directory");
+        exit(1);
+    }
+
+    // Current directory entry 
+    struct dirent *direntry;
+
+    // Current file name with parent directory
+    char filename[1025];
+
+    // Iterate through files in directory
+    int i = block;
+    direntry = readdir(dirstream);
+    while (direntry && block * nBlocks + i < amount)
+    {
+        // Check need to realloc (or alloc if nBlocks == 0)
+        if(i == block)
+        {
+            i = 0;
+            nBlocks++;
+            tiles = realloc(tiles, nBlocks * block * sizeof(image_t *));
+        }
+        
+
+        // Check if entry is a file and contains '.ppm' in its name 
+        if(direntry->d_type == DT_REG && strstr(direntry->d_name, ".ppm") != NULL)
+        {
+            // Generate composite filename ("directory/direntry")
+            sprintf(filename, "%s/%s", directory, direntry->d_name);
+
+            // Place file 'directory/direntry' in array
+            tiles[(nBlocks - 1) * block + i] = ReadImage(filename);
+            i++;
+        }
+
+        // Read next entry
+        direntry = readdir(dirstream);
+    }
+
+    // Check need to realloc (or alloc if nBlocks == 0)
+        if(i == block)
+        {
+            i = 0;
+            nBlocks++;
+            tiles = realloc(tiles, nBlocks * block * sizeof(image_t *));
+        }
+
+    // Adds a null pointer at the end of array
+    tiles[(nBlocks - 1) * block + 1] = NULL;
+
+    return tiles;
+}
 
 // Close and free a given image
 int CloseImage(image_t *image)
@@ -178,6 +246,9 @@ int CloseImage(image_t *image)
     // Free allocated raster of image
     free(image->raster[0]);
     free(image->raster);
+
+    // Free allocated string for magic number
+    free(image->magicNumber);
 
     // Free allocated image
     free(image);

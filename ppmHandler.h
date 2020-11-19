@@ -25,8 +25,8 @@ typedef struct image
 // Read a given '.ppm' file and and interpretate it as an image_t
 image_t *ReadImage(const char *name);
 
-// Read the given tiles directory and from a certain start point and return an array of amount tiles
-image_t *ReadTiles(const char *directory, int start, int amount);
+// Read the given tiles directory and return an array of amount tiles
+image_t **ReadTiles(const char *directory, int amount);
 
 // Close and free a given image
 int CloseImage(image_t *image);
