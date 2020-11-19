@@ -355,7 +355,7 @@ int ChangeContent(image_t * image, int hStart, int hEnd, int wStart, int wEnd, i
 
     // Reassign every pixel in given region with corresponding pixel in tile.
     // Tiles begin from (0, 0).
-    // NO VERIFICATION OF TILE END IS GIVEN!!
+    // NO VERIFICATION OF TILE END IS MADE IN THIS FUNCTION!!
     for (int i = hStart; i < hEnd; i++)
     {
         for (int j = wStart; j < wEnd; j++)
