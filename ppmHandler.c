@@ -82,6 +82,9 @@ static int ParseP3(image_t *image)
 // Parse through and fill raster of a P6 image
 static int ParseP6(image_t *image)
 {
+    // Get '\n' character from input file
+    fgetc(image->source);
+
     for(int i = 0; i < image->height; i++)
     {
         for (int j = 0; j < image->width; j++)
@@ -114,8 +117,18 @@ image_t *ReadImage(const char *name)
         exit(1);
     }
 
-    //open the file and assign it to image source file
-    image->source = fopen(name, "r");
+    // Compare if file name is not stdin
+    if (strcmp(name, "stdin") != 0)
+    {
+        // Open the file and assign it to image source file
+        image->source = fopen(name, "r");
+    }
+    else
+    {
+        image->source = stdin;
+    }
+    
+    // Exit program if image source couldn't be open
     if(!image->source)
     {
         perror("No image with name found");
@@ -158,7 +171,10 @@ image_t *ReadImage(const char *name)
     }
 
     // Close the image source stream
-    fclose(image->source);
+    if(image->source != stdin)
+    {
+        fclose(image->source);
+    }
     image->source = NULL;
 
     return image;
@@ -236,12 +252,12 @@ image_t **ReadTiles(const char *directory, int amount)
 // Close and free a given image
 int CloseImage(image_t *image)
 {
-    // Check if image source stream is close and close it
-    if(image->source != NULL)
+    // Check if image source stream is closed or is stdio and close it
+    if(image->source != NULL && image->source != stdin && image->source != stdout)
     {
         fclose(image->source);
-        image->source = NULL;
     }
+    image->source = NULL;
 
     // Free allocated raster of image
     free(image->raster[0]);
@@ -333,6 +349,19 @@ double RedMean(double *img1Avg, double *img2Avg)
     return c;
 }
 
+// double RedMean(double *img1Avg, double *img2Avg)
+// {
+//     // Calculate the difference between the averages of each channel
+//     double deltaR = img1Avg[0] - img2Avg[0];
+//     double deltaG = img1Avg[1] - img2Avg[1];
+//     double deltaB = img1Avg[2] - img2Avg[2];
+    
+//     // Calculate the Red Mean
+//     double c = sqrt(pow(deltaR,2) + pow(deltaG,2) + pow(deltaB,2));
+
+//     return c;
+// }
+
 // Changes a region of an image with the contents of a tile
 int ChangeContent(image_t * image, int hStart, int hEnd, int wStart, int wEnd, image_t *tile)
 {
@@ -361,7 +390,7 @@ int ChangeContent(image_t * image, int hStart, int hEnd, int wStart, int wEnd, i
         for (int j = wStart; j < wEnd; j++)
         {
             // Assures that tile pixel will be placed inside image
-            if(i < hEnd && j < wEnd)
+            if(i < image->height && j < image->width)
             {
                 image->raster[i][j] = tile->raster[i - hStart][j - wStart];
             }
@@ -406,7 +435,17 @@ int WriteImage(const char *name, image_t *image)
 {
     // Create output stream
     FILE *output;
-    output = fopen(name, "w");
+
+    if(strcmp(name, "stdout") != 0)
+    {
+        // Open output stream
+        output = fopen(name, "w");
+    }
+    else
+    {
+        output = stdout;
+    }
+    
 
     // Prints header of file
     fprintf(output, "%s\n%d %d\n%d\n", image->magicNumber, image->width, image->height, image->maxValue);
@@ -422,7 +461,10 @@ int WriteImage(const char *name, image_t *image)
     }
     
     // Close output stream
-    fclose(output);
-
+    if (output != stdout)
+    { 
+        fclose(output);
+    }
+   
     return 0;
 }
