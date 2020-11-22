@@ -1,3 +1,6 @@
+// Henrique Luiz Rieger
+// GRR20190357
+
 # include <stdio.h>
 
 # ifndef __PPM__

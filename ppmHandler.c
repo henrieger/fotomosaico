@@ -1,3 +1,6 @@
+// Henrique Luiz Rieger
+// GRR20190357
+
 # include "ppmHandler.h"
 # include <stdlib.h>
 # include <string.h>
@@ -23,7 +26,7 @@ static int ParseHeader(image_t *image)
         if(param[0] == '#')
         {
             c = fgetc(image->source);
-            while (c != '\n')
+            while (c != '\n' && c != '\r')
             {
                 c = fgetc(image->source);
             }
@@ -348,19 +351,6 @@ double RedMean(double *img1Avg, double *img2Avg)
 
     return c;
 }
-
-// double RedMean(double *img1Avg, double *img2Avg)
-// {
-//     // Calculate the difference between the averages of each channel
-//     double deltaR = img1Avg[0] - img2Avg[0];
-//     double deltaG = img1Avg[1] - img2Avg[1];
-//     double deltaB = img1Avg[2] - img2Avg[2];
-    
-//     // Calculate the Red Mean
-//     double c = sqrt(pow(deltaR,2) + pow(deltaG,2) + pow(deltaB,2));
-
-//     return c;
-// }
 
 // Changes a region of an image with the contents of a tile
 int ChangeContent(image_t * image, int hStart, int hEnd, int wStart, int wEnd, image_t *tile)

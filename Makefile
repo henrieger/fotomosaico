@@ -1,3 +1,6 @@
+# Henrique Luiz Rieger
+# GRR20190357
+
 # Standard make system variables
 CC = gcc
 CFLAGS = -Wall #-std=c99

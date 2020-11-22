@@ -1,3 +1,6 @@
+// Henrique Luiz Rieger
+// GRR20190357
+
 # include "inputHandler.h"
 # include <stdio.h>
 # include <string.h>

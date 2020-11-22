@@ -1,3 +1,6 @@
+// Henrique Luiz Rieger
+// GRR20190357
+
 #ifndef __INPUT__
 # define __INPUT__
 

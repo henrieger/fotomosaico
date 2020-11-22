@@ -1,3 +1,6 @@
+// Henrique Luiz Rieger
+// GRR20190357
+
 # include "ppmHandler.h"
 # include "inputHandler.h"
 # include <stdio.h>
